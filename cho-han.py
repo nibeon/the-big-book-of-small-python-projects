@@ -1,0 +1,83 @@
+"""Чо-хан, (c) Эл Свейгарт al@inventwithpython.com
+Традиционная японская игра в кости типа чет-нечет.
+Теги: короткая, для начинающих, игра"""
+
+import random, sys
+
+JAPANESE_NUMBERS = {1: 'ICHI', 2: 'NI', 3: 'SAN', 
+                    4: 'SHI', 5: 'GO', 6: 'ROKU'}
+
+print('''Cho-Han, by Al Sweigart al@inventwithpython.com
+
+In this traditional Japanese dice game, two dice are rolled in a bamboo
+cup by the dealer sitting on the floor. The player must guess if the
+dice total to an even (cho) or odd (han) number.
+''')
+
+purse = 5000
+while True:
+    # деланье ставок
+    print('You have', purse, 'mon. How much do you bet? (or QUIT)')
+    while True:
+        pot = input('> ')
+        if pot.upper() == 'QUIT':
+            print('Thanks for playing!')
+            sys.exit()
+        elif not pot.isdecimal():
+            print('Please enter a number.')
+        elif int(pot) > purse:
+            print('You do not have enough to make that bet.')
+        else:
+            # допустимая ставка
+            pot = int(pot)
+            break # выходим из цикла после размещения допустимой ставки
+        
+    # бросаем кости
+    dice1 = random.randint(1, 6)
+    dice2 = random.randint(1, 6)
+    
+    print('The dealer swirls the cup and you hear the rattle of dice.')
+    print('The dealer slams the cup on the floor, still covering the')
+    print('dice and asks for your bet.')
+    print()
+    print(' CHO (even) or HAN (odd)?')    
+    
+    # Спрашиваем у игрока, на что он ставит: на чо или на хан:
+    while True:
+        bet = input('> ').upper()
+        if bet != 'CHO' and bet != 'HAN':
+            print('Please enter either "CHO" or "HAN".')
+            continue
+        else:
+            break
+        
+    # открываем результаты выброса костей
+    print('The dealer lifts the cup to reveal:')
+    print(' ', JAPANESE_NUMBERS[dice1], '-', JAPANESE_NUMBERS[dice2])
+    print(' ', dice1, '-', dice2)
+    
+    # определяем выиграл ли игрок
+    rollIsEven = (dice1 + dice2) % 2 == 0
+    if rollIsEven:
+        correctBet = 'CHO'
+    else:
+        correctBet = 'HAN'
+        
+    playerWon = bet == correctBet
+    
+    # отображаем резельтаты ставок
+    if playerWon:
+        print('You won! You take', pot, 'mon.')
+        purse = purse + pot
+        print('The house collects a', pot // 10, 'mon fee.')
+        purse = purse - (pot // 10) # сбор игрального дома 10%
+    else:
+        purse = purse - pot # вычитаем ставку из кошелька
+        print('You lost!')
+        
+    # проверка денег у игрока
+    if purse == 0:
+        print('You have run out of money!')
+        print('Thanks for playing!')
+        sys.exit()
+        
